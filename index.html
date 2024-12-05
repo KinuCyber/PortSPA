@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+    <meta name="description" content="Welcome to my portfolio! Explore my work and projects.">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "WebSite",
+      "name": "My Portfolio",
+      "url": "https://yourportfolio.github.io",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://yourportfolio.github.io/?search={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- Styles -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #content {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="#/">Home</a> |
+        <a href="#/about">About</a> |
+        <a href="#/projects">Projects</a> |
+        <a href="#/contact">Contact</a>
+    </nav>
+
+    <div id="content">
+        <!-- Content will be dynamically loaded here -->
+    </div>
+
+    <!-- Fallback for 404 Pages (For GitHub Pages) -->
+    <noscript>
+        <p>Your browser does not support JavaScript or it is disabled. Please enable JavaScript for the full experience.</p>
+    </noscript>
+
+    <script>
+        // Routes and content mapping
+        const routes = {
+            '/': '<h1>Welcome to My Portfolio</h1><p>This is the home page.</p>',
+            '/about': '<h1>About Me</h1><p>Here is some information about me.</p>',
+            '/projects': '<h1>My Projects</h1><p>Here are my projects.</p>',
+            '/contact': '<h1>Contact Me</h1><p>Feel free to reach out.</p>'
+        };
+
+        function handleRouting() {
+            const path = window.location.hash.slice(1) || '/'; // Default to home if no hash
+            const contentDiv = document.getElementById('content');
+
+            if (routes[path]) {
+                document.title = `${routes[path].match(/<h1>(.*?)<\/h1>/)[1]} - My Portfolio`;
+                contentDiv.innerHTML = routes[path];
+            } else {
+                // Fallback for unknown routes
+                document.title = '404 - Page Not Found';
+                contentDiv.innerHTML = '<h1>404</h1><p>Page not found.</p>';
+            }
+        }
+
+        // Initial load
+        handleRouting();
+
+        // Update content on hash change
+        window.addEventListener('hashchange', handleRouting);
+
+        // Add meta description dynamically (for search engines with JS support)
+        function updateMetaDescription(description) {
+            let metaTag = document.querySelector('meta[name="description"]');
+            if (metaTag) {
+                metaTag.content = description;
+            } else {
+                metaTag = document.createElement('meta');
+                metaTag.name = "description";
+                metaTag.content = description;
+                document.head.appendChild(metaTag);
+            }
+        }
+
+        // Call meta description update (example: extend for routes if needed)
+        const descriptions = {
+            '/': 'Welcome to my portfolio! Explore my work and projects.',
+            '/about': 'Learn more about me, my work, and my passion.',
+            '/projects': 'Browse through my latest projects and accomplishments.',
+            '/contact': 'Get in touch with me for collaborations or inquiries.'
+        };
+
+        window.addEventListener('hashchange', () => {
+            const path = window.location.hash.slice(1) || '/';
+            updateMetaDescription(descriptions[path] || 'Welcome to my portfolio!');
+        });
+    </script>
+</body>
+</html>
