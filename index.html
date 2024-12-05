@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" spacontent="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Portfolio</title>
-    <meta name="description" spacontent="Welcome to my portfolio! Explore my work and projects.">
+    <meta name="description" content="Welcome to my portfolio! Explore my work and projects.">
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -21,18 +21,8 @@
     }
     </script>
 
-    <!-- Styles -->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        #spacontent {
-            padding: 20px;
-        }
-    </style>
+    <!-- Link to external stylesheet -->
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <nav>
@@ -41,68 +31,21 @@
         <a href="#/lab">Lab</a>
     </nav>
 
+    <canvas id="bgParticleCanvas"></canvas>
+
     <div id="spacontent">
-        <!-- spacontent will be dynamically loaded here -->
+        <!-- Content will be dynamically loaded here -->
     </div>
 
-    <!-- Fallback for 404 Pages (For GitHub Pages) -->
+    <!-- Fallback for 404 Pages -->
     <noscript>
         <p>Your browser does not support JavaScript or it is disabled. Please enable JavaScript for the full experience.</p>
     </noscript>
 
-    <script>
-        // Routes and spacontent mapping
-        const routes = {
-            '/': '<h1>Welcome to My Portfolio</h1><p>This is the home page.</p>',
-            '/projects': '<h1>My Projects</h1><p>Here are my projects.</p>',
-            '/lab': '<h1>Lab</h1><p>Feel free to check these out.</p>'
-        };
-
-        function handleRouting() {
-            const path = window.location.hash.slice(1) || '/'; // Default to home if no hash
-            const spacontentDiv = document.getElementById('spacontent');
-
-            if (routes[path]) {
-                document.title = `${routes[path].match(/<h1>(.*?)<\/h1>/)[1]} - My Portfolio`;
-                spacontentDiv.innerHTML = routes[path];
-            } else {
-                // Fallback for unknown routes
-                document.title = '404 - Page Not Found';
-                spacontentDiv.innerHTML = '<h1>404</h1><p>Page not found.</p>';
-            }
-        }
-
-        // Initial load
-        handleRouting();
-
-        // Update spacontent on hash change
-        window.addEventListener('hashchange', handleRouting);
-
-        // Add meta description dynamically (for search engines with JS support)
-        function updateMetaDescription(description) {
-            let metaTag = document.querySelector('meta[name="description"]');
-            if (metaTag) {
-                metaTag.spacontent = description;
-            } else {
-                metaTag = document.createElement('meta');
-                metaTag.name = "description";
-                metaTag.spacontent = description;
-                document.head.appendChild(metaTag);
-            }
-        }
-
-        // Call meta description update (example: extend for routes if needed)
-        const descriptions = {
-            '/': 'Welcome to my portfolio! Explore my work and projects.',
-            '/about': 'Learn more about me, my work, and my passion.',
-            '/projects': 'Browse through my latest projects and accomplishments.',
-            '/contact': 'Get in touch with me for collaborations or inquiries.'
-        };
-
-        window.addEventListener('hashchange', () => {
-            const path = window.location.hash.slice(1) || '/';
-            updateMetaDescription(descriptions[path] || 'Welcome to my portfolio!');
-        });
-    </script>
+    <!-- External Scripts -->
+    <script src="js/eventManager.js"></script>
+    <script src="js/particleModule.js"></script>
+    <script src="js/routes.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

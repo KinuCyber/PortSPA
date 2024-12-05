@@ -1,0 +1,25 @@
+:root {
+    --theme-color: 255, 111, 0; /* Orange theme */
+    --secondary-color: 29, 29, 29;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+	background-color: black;
+}
+
+#bgParticleCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    z-index: -1;
+}
+
+#spacontent {
+    padding: 20px;
+}

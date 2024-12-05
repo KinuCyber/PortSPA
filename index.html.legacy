@@ -1,0 +1,394 @@
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>My Portfolio</title>
+		<meta name="description" content="Welcome to my portfolio! Explore my work and projects.">
+
+		<!-- JSON-LD Structured Data -->
+		<script type="application/ld+json">
+		{
+		  "@context": "http://schema.org",
+		  "@type": "WebSite",
+		  "name": "My Portfolio",
+		  "url": "https://yourportfolio.github.io",
+		  "potentialAction": {
+			"@type": "SearchAction",
+			"target": "https://yourportfolio.github.io/?search={search_term_string}",
+			"query-input": "required name=search_term_string"
+		  }
+		}
+		</script>
+
+		<!-- Styles -->
+		<style>
+			:root {
+				--theme-color: 255,111,0; /* Orange theme */
+				--secondary-color: 29,29,29;
+			}
+			body {
+				font-family: Arial, sans-serif;
+				margin: 0;
+				padding: 0;
+			}
+			
+			#bgParticleCanvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			background: transparent;
+			z-index: -1;
+		}
+
+			#spacontent {
+				padding: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<nav>
+			<a href="#/">Home</a> |
+			<a href="#/projects">Gallery</a> |
+			<a href="#/lab">Lab</a>
+		</nav>
+		
+		
+		<canvas id="bgParticleCanvas"></canvas>
+
+		<div id="spacontent">
+			<!-- spacontent will be dynamically loaded here -->
+		</div>
+
+		<!-- Fallback for 404 Pages (For GitHub Pages) -->
+		<noscript>
+			<p>Your browser does not support JavaScript or it is disabled. Please enable JavaScript for the full experience.</p>
+		</noscript>
+
+		<script>
+			
+			const eventManager = (function () {
+				const state = {
+					mousePosition: { x: 0, y: 0 },
+					isMouseDown: false
+				};
+
+				// Set up event listeners to update the state
+				window.addEventListener('mousemove', (event) => {
+					state.mousePosition.x = event.clientX;
+					state.mousePosition.y = event.clientY;
+				});
+
+				window.addEventListener('mousedown', () => {
+					state.isMouseDown = true;
+				});
+
+				window.addEventListener('mouseup', () => {
+					state.isMouseDown = false;
+				});
+
+				// Expose functions to get the current state
+				return {
+					getMousePosition: () => ({ ...state.mousePosition }),
+					isMouseDown: () => state.isMouseDown
+				};
+			})();
+
+			const particleModule = (function () {
+				let canvas, ctx, particlesArray = [];
+				const mouse = {
+					x: null,
+					y: null,
+					radius: 100 // Radius within which particles will avoid the mouse
+				};
+				const gradientPoints = [
+					{ x: 100, y: 100, color: { r: 255, g: 0, b: 0 } }, // Red
+					{ x: 500, y: 400, color: { r: 0, g: 255, b: 0 } }, // Green
+					{ x: 900, y: 200, color: { r: 0, g: 0, b: 255 } }  // Blue
+				];
+
+
+				let themeColor; // Variable to store the theme color
+
+				// Particle class with a z dimension for depth
+				class Particle {
+					constructor(x, y, z, size, speedX, speedY) {
+						this.x = x;
+						this.y = y;
+						this.z = z; // Depth
+						this.size = size;
+						this.speedX = speedX;
+						this.speedY = speedY;
+						this.baseSize = size;
+					}
+
+					// Draw each particle
+					draw() {
+						const interpolatedColor = interpolateColors(this.x, this.y);
+
+						const dx = mouse.x - this.x;
+						const dy = mouse.y - this.y;
+						const distance = Math.sqrt(dx * dx + dy * dy);
+
+						let opacity = 1;
+						if (distance < mouse.radius) {
+							opacity = Math.max(0.1, 1 - distance / mouse.radius);
+						}
+
+						const scaleFactor = 1 / (this.z + 5);
+						const size = this.baseSize * scaleFactor;
+
+						ctx.fillStyle = `rgba(${interpolatedColor.r}, ${interpolatedColor.g}, ${interpolatedColor.b}, ${opacity})`;
+						ctx.beginPath();
+						ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
+						ctx.closePath();
+						ctx.fill();
+					}
+
+
+					// Update particle position
+					update() {
+						const dx = mouse.x - this.x;
+						const dy = mouse.y - this.y;
+						const distance = Math.sqrt(dx * dx + dy * dy);
+
+						if (distance < mouse.radius) {
+							this.x -= dx / distance * 2;
+							this.y -= dy / distance * 2;
+						} else {
+							this.x += this.speedX;
+							this.y += this.speedY;
+						}
+
+						this.z += Math.sin(this.x * 0.01) * 0.05;
+
+						// Ensure z is within bounds
+						if (this.z < 0 || this.z > 20) {
+							this.z = (this.z + 20) % 20;
+						}
+
+						// Boundary check
+						if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+						if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+					}
+				}
+
+				function interpolateColors(particleX, particleY) {
+					let totalWeight = 0;
+					let interpolatedColor = { r: 0, g: 0, b: 0 };
+
+					gradientPoints.forEach(point => {
+						const dx = particleX - point.x;
+						const dy = particleY - point.y;
+						const distance = Math.sqrt(dx * dx + dy * dy);
+
+						// Weight inversely proportional to distance
+						const weight = 1 / Math.max(distance, 1);
+						totalWeight += weight;
+
+						interpolatedColor.r += point.color.r * weight;
+						interpolatedColor.g += point.color.g * weight;
+						interpolatedColor.b += point.color.b * weight;
+					});
+
+					// Normalize by total weight
+					interpolatedColor.r = Math.min(255, Math.max(0, interpolatedColor.r / totalWeight));
+					interpolatedColor.g = Math.min(255, Math.max(0, interpolatedColor.g / totalWeight));
+					interpolatedColor.b = Math.min(255, Math.max(0, interpolatedColor.b / totalWeight));
+
+					return interpolatedColor;
+				}
+
+				// Initialize particles
+				function init() {
+					canvas = document.getElementById('bgParticleCanvas');
+					if (!canvas) {
+						console.error("Canvas element with ID 'bgParticleCanvas' not found");
+						return;
+					}
+
+					ctx = canvas.getContext('2d');
+					if (!ctx) {
+						console.error("2D context could not be initialized");
+						return;
+					}
+
+					canvas.width = window.innerWidth;
+					canvas.height = window.innerHeight;
+
+					// Retrieve the theme color from CSS
+					const rootStyles = getComputedStyle(document.documentElement);
+					const colorValue = rootStyles.getPropertyValue('--theme-color').trim();
+					const rgb = colorValue.match(/\d+/g).map(Number);
+					themeColor = { r: rgb[0], g: rgb[1], b: rgb[2] };
+
+					particlesArray = [];
+					const numberOfParticles = 200;
+					for (let i = 0; i < numberOfParticles; i++) {
+						const size = Math.random() * 5 + 1;
+						const x = Math.random() * canvas.width;
+						const y = Math.random() * canvas.height;
+						const z = Math.random() * 20;
+						const speedX = (Math.random() - 0.5) * 2;
+						const speedY = (Math.random() - 0.5) * 2;
+						particlesArray.push(new Particle(x, y, z, size, speedX, speedY));
+					}
+				}
+
+				function connectParticles() {
+					for (let a = 0; a < particlesArray.length; a++) {
+						for (let b = a; b < particlesArray.length; b++) {
+							const dx = particlesArray[a].x - particlesArray[b].x;
+							const dy = particlesArray[a].y - particlesArray[b].y;
+							const dz = particlesArray[a].z - particlesArray[b].z;
+							const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+							if (distance < 100) {
+								const colorA = interpolateColors(particlesArray[a].x, particlesArray[a].y);
+								const colorB = interpolateColors(particlesArray[b].x, particlesArray[b].y);
+
+								const gradient = ctx.createLinearGradient(
+									particlesArray[a].x, particlesArray[a].y,
+									particlesArray[b].x, particlesArray[b].y
+								);
+
+								gradient.addColorStop(0, `rgba(${colorA.r}, ${colorA.g}, ${colorA.b}, ${1 - distance / 100})`);
+								gradient.addColorStop(1, `rgba(${colorB.r}, ${colorB.g}, ${colorB.b}, ${1 - distance / 100})`);
+
+								ctx.strokeStyle = gradient;
+								ctx.lineWidth = 0.5;
+								ctx.beginPath();
+								ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+								ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+								ctx.stroke();
+							}
+						}
+					}
+				}
+
+				// Animation loop
+				function animate() {
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+					const mousePosition = eventManager.getMousePosition();
+					mouse.x = mousePosition.x;
+					mouse.y = mousePosition.y;
+
+					particlesArray.forEach(particle => {
+						particle.update();
+						particle.draw();
+					});
+					connectParticles();
+					requestAnimationFrame(animate);
+				}
+
+				// Public API
+				return { init, animate };
+			})();
+
+
+
+			// Routes and spacontent mapping
+			const routes = {
+				'/': {
+					spacontent: `
+						<h1>Welcome to My Portfolio</h1>
+						<p>This is the home page with a particle background.</p>
+					`,
+					init: initializeHome
+				},
+				'/projects': {
+					spacontent: `
+						<h1>My Projects</h1>
+						<div id="dragScrollContainer" class="drag-scroll">
+							<div class="project-card">Project 1</div>
+							<div class="project-card">Project 2</div>
+							<div class="project-card">Project 3</div>
+						</div>
+					`,
+					init: initializeProjects
+				},
+				'/lab': {
+					spacontent: `
+						<h1>Lab</h1>
+						<p>Feel free to check these out.</p>
+					`,
+					init: initializeLab
+				}
+			};
+
+			function handleRouting() {
+				const path = window.location.hash.slice(1) || '/'; // Default to home if no hash
+				const spacontentDiv = document.getElementById('spacontent');
+
+				if (routes[path]) {
+					// Set spacontent
+					spacontentDiv.innerHTML = routes[path].spacontent;
+
+					// Initialize functionality
+					if (routes[path].init) {
+						routes[path].init();
+					}
+				} else {
+					document.title = '404 - Page Not Found';
+					spacontentDiv.innerHTML = '<h1>404</h1><p>Page not found.</p>';
+				}
+			}
+
+			// Example Initialization Functions
+			function initializeHome() {
+				document.title = 'Kinu 3D - Home';
+				particleModule.init();
+				particleModule.animate();
+			}
+
+			function initializeProjects() {
+				// Initialize drag-scroll
+					document.title = 'Kinu 3D - Projects';
+				const container = document.getElementById('dragScrollContainer');
+				if (container) {
+					initializeDragScroll(container); // Add your drag-scroll logic here
+				}
+			}
+
+			function initializeLab() {
+				// Any specific logic for the Lab page
+					document.title = 'Kinu 3D - Lab';
+				console.log("Lab page initialized");
+			}
+
+			// Call the route handler on hash change
+			window.addEventListener('hashchange', handleRouting);
+
+			// Load initial spacontent
+			handleRouting();
+
+			// Add meta description dynamically (for search engines with JS support)
+			function updateMetaDescription(description) {
+				let metaTag = document.querySelector('meta[name="description"]');
+				if (metaTag) {
+					metaTag.content = description;
+				} else {
+					metaTag = document.createElement('meta');
+					metaTag.name = "description";
+					metaTag.content = description;
+					document.head.appendChild(metaTag);
+				}
+			}
+
+			// Meta descriptions for routes
+			const descriptions = {
+				'/': 'Welcome to my portfolio! Explore my work and projects.',
+				'/projects': 'Browse through my latest projects and accomplishments.',
+				'/lab': 'Check out my thought process and methods.'
+			};
+
+			window.addEventListener('hashchange', () => {
+				const path = window.location.hash.slice(1) || '/';
+				updateMetaDescription(descriptions[path] || 'Welcome to my portfolio!');
+			});
+		</script>
+	</body>
+	</html>
