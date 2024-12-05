@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" spacontent="width=device-width, initial-scale=1.0">
     <title>My Portfolio</title>
-    <meta name="description" content="Welcome to my portfolio! Explore my work and projects.">
+    <meta name="description" spacontent="Welcome to my portfolio! Explore my work and projects.">
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -29,7 +29,7 @@
             padding: 0;
         }
 
-        #content {
+        #spacontent {
             padding: 20px;
         }
     </style>
@@ -37,13 +37,12 @@
 <body>
     <nav>
         <a href="#/">Home</a> |
-        <a href="#/about">About</a> |
-        <a href="#/projects">Projects</a> |
-        <a href="#/contact">Contact</a>
+        <a href="#/projects">Gallery</a> |
+        <a href="#/lab">Lab</a>
     </nav>
 
-    <div id="content">
-        <!-- Content will be dynamically loaded here -->
+    <div id="spacontent">
+        <!-- spacontent will be dynamically loaded here -->
     </div>
 
     <!-- Fallback for 404 Pages (For GitHub Pages) -->
@@ -52,43 +51,42 @@
     </noscript>
 
     <script>
-        // Routes and content mapping
+        // Routes and spacontent mapping
         const routes = {
             '/': '<h1>Welcome to My Portfolio</h1><p>This is the home page.</p>',
-            '/about': '<h1>About Me</h1><p>Here is some information about me.</p>',
             '/projects': '<h1>My Projects</h1><p>Here are my projects.</p>',
-            '/contact': '<h1>Contact Me</h1><p>Feel free to reach out.</p>'
+            '/lab': '<h1>Lab</h1><p>Feel free to check these out.</p>'
         };
 
         function handleRouting() {
             const path = window.location.hash.slice(1) || '/'; // Default to home if no hash
-            const contentDiv = document.getElementById('content');
+            const spacontentDiv = document.getElementById('spacontent');
 
             if (routes[path]) {
                 document.title = `${routes[path].match(/<h1>(.*?)<\/h1>/)[1]} - My Portfolio`;
-                contentDiv.innerHTML = routes[path];
+                spacontentDiv.innerHTML = routes[path];
             } else {
                 // Fallback for unknown routes
                 document.title = '404 - Page Not Found';
-                contentDiv.innerHTML = '<h1>404</h1><p>Page not found.</p>';
+                spacontentDiv.innerHTML = '<h1>404</h1><p>Page not found.</p>';
             }
         }
 
         // Initial load
         handleRouting();
 
-        // Update content on hash change
+        // Update spacontent on hash change
         window.addEventListener('hashchange', handleRouting);
 
         // Add meta description dynamically (for search engines with JS support)
         function updateMetaDescription(description) {
             let metaTag = document.querySelector('meta[name="description"]');
             if (metaTag) {
-                metaTag.content = description;
+                metaTag.spacontent = description;
             } else {
                 metaTag = document.createElement('meta');
                 metaTag.name = "description";
-                metaTag.content = description;
+                metaTag.spacontent = description;
                 document.head.appendChild(metaTag);
             }
         }
