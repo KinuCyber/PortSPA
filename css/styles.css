@@ -26,7 +26,7 @@ html, body {
 body {
     display: flex;
     flex-direction: column;
-    overflow-y: auto;  /* Ensure content scrolls vertically */
+    overflow-y: hidden;  /* Ensure content scrolls vertically */
     min-height: 100%; /* Ensures body fills full viewport */
 	position: relative; /* Ensure child elements behave predictably */
     z-index: auto; /* Allow children to define their own stacking */
@@ -244,8 +244,8 @@ h1, h2 {
 }
 
 /* Vertical Drag Scroll Modal */
-#scrollDeck {
-    height: 100%;
+.scrollDeck {
+    height: 100vh;
     overflow-y: hidden;
     padding: 20px;
     position: relative;
@@ -262,7 +262,7 @@ h1, h2 {
 	scroll-behavior: smooth;
 }
 
-#scrollDeck .content {
+.scrollDeck .content {
 	position: relative;
     height: 800px;
 	max-height: 80vh;

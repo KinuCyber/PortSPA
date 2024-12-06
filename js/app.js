@@ -1,4 +1,4 @@
-// js/index.js
+// js/app.js
 import { routes } from './routes.js';
 
 import { particleModule } from './particleModule.js';
