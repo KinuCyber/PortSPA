@@ -3,7 +3,6 @@ export const routes = {
     '/': {
         spacontent: `
             <div class="scrollDeck" id="scrollDeck" style="margin-left: 20%; width: 60%;">
-			<div style="height: 2000px; background: linear-gradient(to bottom, #fff, #ccc);">
                 <!-- Land Transition Section -->
                 <section id="landTrans" class="content" style="background: transparent">
                     <section>
@@ -64,7 +63,6 @@ export const routes = {
                     </p>
                 </section>
             </div>
-			</div>
         `,
         init: async () => {
             document.title = 'Home - Kinu 3D';
