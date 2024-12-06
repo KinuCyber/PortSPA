@@ -1,15 +1,106 @@
 :root {
-    --theme-color: 255, 111, 0; /* Orange theme */
-    --secondary-color: 29, 29, 29;
-}
+    --theme-color: 255,111,0; /* Orange theme */
+	--secondary-color: 29,29,29;
+	}
 
-body {
-    font-family: Arial, sans-serif;
+/* Global Reset */
+*,
+*::before,
+*::after {
+
     margin: 0;
     padding: 0;
-	background-color: black;
+    box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;  /* Ensure body takes full viewport height */
+    font-family: Arial, sans-serif;
+    color: #e0e0e0;
+    background: transparent;
+    overflow-x: hidden;  /* Prevent horizontal overflow */
+    scroll-behavior: smooth; /* Smooth scrolling for anchors */
+}
+
+/* Avoid any content pushing the page down */
+body {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;  /* Ensure content scrolls vertically */
+    min-height: 100%; /* Ensures body fills full viewport */
+	position: relative; /* Ensure child elements behave predictably */
+    z-index: auto; /* Allow children to define their own stacking */
+	background: #1e1e1e;
+}
+
+header, footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+	position: relative;
+	z-index: 5;
+    background: rgb(var(--secondary-color));
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    position: relative; /* Relative positioning for better stacking */
+    box-shadow: 
+		inset 0 -8px 20px -5px rgba(55, 55, 55, 0.5),
+		0 4px 60px rgba(0, 0, 0, 0.3); /* Optional visual enhancement */
+}
+
+footer {
+	border-radius: 10px;
+}
+
+upcoming {
+	position: absolute; /* Position nav independently */
+    left: 100%; /* Start positioning from the horizontal center */
+    transform: translateX(-100%); /* Move nav to be perfectly centered */
+    z-index: 10; /* Higher than modalContainer */
+    display: flex;
+    justify-content: center;
+    background: transparent; /* Slightly translucent for clarity */
+    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0); /* Optional visual enhancement */
+}
+
+upcoming p {
+	white-space: nowrap;
+    text-decoration: none;
+    margin: 0 1rem;
+    z-index: 2;
+}
+
+nav {
+	position: absolute; /* Position nav independently */
+    left: 50%; /* Start positioning from the horizontal center */
+    transform: translateX(-50%); /* Move nav to be perfectly centered */
+    z-index: 10; /* Higher than modalContainer */
+    display: flex;
+    justify-content: center;
+    background: transparent; /* Slightly translucent for clarity */
+    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0); /* Optional visual enhancement */
+}
+
+nav a {
+    color: rgb(var(--theme-color));
+    text-decoration: none;
+    margin: 0 1rem;
+    z-index: 2;
+}
+
+h1, h2 {
+    color: rgb(var(--theme-color));
+}
+
+#spacontent {
+    padding: 20px;
+}
+
+/* Ensure background and canvas work properly */
 #bgParticleCanvas {
     position: absolute;
     top: 0;
@@ -20,6 +111,231 @@ body {
     z-index: -1;
 }
 
-#spacontent {
-    padding: 20px;
+/* Vertical Navigation Bar */
+.verSectionNav {
+    position: absolute;
+    top: 100px;  /* Adjust the position based on content */
+    left: 0;
+    height: calc(100vh - 100px);  /* Keep navbar height within viewport */
+    width: 200px;
+    background: transparent;
+    color: #fff;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: none;
 }
+
+/* Nav Item Styles */
+.verSectionNav-item {
+    margin-left: 30px;
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+    position: relative;
+}
+
+.verSectionNav-item:hover {
+    background: transparent;
+}
+
+.verSectionNav-item.active {
+    background: transparent;
+}
+
+/* Circle bullet point */
+.circle-bullet {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    margin-right: 15px;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
+}
+
+/* Line connecting circle to text */
+.line {
+    position: absolute;
+    margin-top: 225%;
+    left: calc(50% - 0.1px);
+    top: 100%;
+    width: 450%;
+    height: 2px;
+    background-color: #fff;
+    transition: width 0.3s ease;
+    transform: translateX(-50%) rotate(90deg);
+}
+
+/* Extruding line towards text */
+.extruding-line {
+    position: absolute;
+    left: 100%;
+    top: 40%;
+    width: 0;
+    height: 1.5px;
+    background-color: #fff;
+    transition: width 0.2s ease;
+}
+
+.circle-bullet.filled {
+    background-color: #DD9900;
+}
+
+.verSectionNav-item.active .extruding-line {
+    width: 125px;
+}
+
+.verSectionNav-item.active p {
+    transform: translateY(-12px);
+	color: rgb(var(--theme-color), 1);
+	transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.verSectionNav-item.active .circle-bullet {
+    background-color: rgb(255,111,0); /* Active state */
+}
+
+.verSectionNav-item.inactive .circle-bullet {
+    background-color: transparent; /* Inactive state */
+}
+
+.verSectionNav-item.inactive {
+    color: gray; /* Example of non-active styling */
+}
+
+.verSectionNav-item.inactive .circle-bullet {
+    background-color: transparent; /* Example of bullet inactive styling */
+}
+
+.verSectionNav-item.inactive .extruding-line {
+    width: 0; /* Collapses the line for inactive items */
+}
+
+
+/* Project Page Styles */
+.project-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.project-card {
+    background-color: rgba(120, 165, 255, 0.03);
+    border-radius: 8px;
+    padding: 1rem;
+    width: 600px;
+    height: 400px;
+    text-align: center;
+	border: 2px solid rgba(120, 165, 255, 0.2);
+}
+
+.project-card a {
+    color: #ff6f00;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Vertical Drag Scroll Modal */
+#scrollDeck {
+    height: 100%;
+    overflow-y: hidden;
+    padding: 20px;
+    position: relative;
+	z-index: 1;
+    background: transparent;
+    box-sizing: border-box;
+    color: #fff;scroll-behavior: smooth; /* Smooth native scrolling */
+	-webkit-overflow-scrolling: touch; /* Enable momentum scrolling for iOS */
+	
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+	scroll-behavior: smooth;
+}
+
+#scrollDeck .content {
+	position: relative;
+    height: 800px;
+	max-height: 80vh;
+    background: rgb(var(--secondary-color));
+    margin-bottom: 40px;
+    border-radius: 20px;
+}
+
+.carousel-container {
+	width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.modal {
+    position: absolute;
+    width: 30%;
+    height: 70%;
+    background-color: #444;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    transition: all 0.5s ease;
+    opacity: 0;
+    transform: scale(0.8);
+    visibility: hidden;
+    user-select: none;
+}
+
+.modal.left:hover,
+.modal.right:hover {
+  box-shadow: 0 0 10px 2px rgba(255, 165, 0, 0.5); /* Add your desired glow effect */
+}
+
+.modal.center {
+    left: 50%;
+    transform: translateX(-50%) translateY(0%);
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(255, 165, 120, 0.8);
+    visibility: visible;
+    z-index: 3;
+}
+
+.modal.left {
+    left: 15%;
+    transform: translateX(-50%) translateY(0%) scale(0.9);
+    opacity: 0.7;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    visibility: visible;
+    z-index: 2;
+}
+
+.modal.right {
+    left: 85%;
+    transform: translateX(-50%) translateY(0%) scale(0.9);
+    opacity: 0.7;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    visibility: visible;
+    z-index: 2;
+}
+
+.modal.hidden {
+    transform: translateY(0%);
+    left: 25%;
+    opacity: 0;
+    visibility: hidden;
+}
+
+

@@ -1,16 +1,23 @@
-const routes = {
+// js/routes.js
+export const routes = {
     '/': {
         spacontent: '<h1>Welcome to My Portfolio</h1>',
-        init: () => {
+        init: async () => {
             document.title = 'Home - Portfolio';
-            particleModule.init();
-            particleModule.animate();
+
+            // Dynamically load verSectionNav.js
+            const verSectionNavModule = await import('./verSectionNav.js');
+            verSectionNavModule.init();
+
+            // Dynamically load carouselDragScroll.js
+            // const carouselDragScrollModule = await import('./carouselDragScroll.js');
+            // carouselDragScrollModule.init();
         },
     },
     '/projects': {
         spacontent: '<h1>My Projects</h1>',
         init: () => {
-            document.title = 'Projects - Portfolio';
+            document.title = 'Projects - Portfolio';;
         },
     },
     '/lab': {

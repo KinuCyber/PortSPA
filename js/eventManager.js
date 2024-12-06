@@ -22,3 +22,7 @@ const eventManager = (function () {
         isMouseDown: () => state.isMouseDown,
     };
 })();
+
+// Export the functions
+export const getMousePosition = eventManager.getMousePosition;
+export const isMouseDown = eventManager.isMouseDown;
