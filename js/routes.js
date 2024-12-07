@@ -1,102 +1,106 @@
 // js/routes.js
+
+// Store the currently loaded stylesheets
+let currentStylesheets = [];
+
+function loadCSS(...files) {
+    // First, remove all currently loaded stylesheets that are not in the new argument list
+    currentStylesheets.forEach(file => {
+        if (!files.includes(file)) {
+            removeCSS(file);
+        }
+    });
+
+    // Load the new stylesheets
+    files.forEach(file => {
+        // Only load the stylesheet if it's not already loaded
+        if (!currentStylesheets.includes(file)) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = file;
+            link.id = file; // Set a unique id for the link (to make removal easier)
+            document.head.appendChild(link);
+            currentStylesheets.push(file); // Add the loaded file to the list of current styles
+        }
+    });
+}
+
+// Function to remove a CSS file by its ID
+function removeCSS(file) {
+    const link = document.getElementById(file);
+    if (link) {
+        document.head.removeChild(link);
+        currentStylesheets = currentStylesheets.filter(f => f !== file); // Remove the file from the current list
+    }
+}
+
+
+
 export const routes = {
     '/': {
-        spacontent: `
-            <div class="scrollDeck" id="scrollDeck" style="margin-left: 20%; width: 60%;">
-                <!-- Land Transition Section -->
-                <section id="landTrans" class="content" style="background: transparent">
-                    <section>
-                        <h2>Main Visuals</h2>
-                        <p>
-                            Particle array background that subtly moves with mouse interaction.
-                            3D vector elements.
-                        </p>
-                    </section>
+		init: async () => {
+		
+			try {
+				document.title = 'Home - Kinu 3D';
+				
+				// Load core styles and home-specific styles
+                loadCSS('../css/styles.css'); // Always load the core styles
+				
+				// Fetch and set the spacontent dynamically
+				const response = await fetch ('./spacontent/home.html');
+				const content = await response.text();
+				document.getElementById('spacontent').innerHTML = content;
 
-                    <h2>Content</h2>    
-                    <p style="white-space: pre-line;">
-                        Brand Tagline: Brief introduction or mission statement.
+				// Initialize shared modules
+				const [carouselDragScrollModule, verticalDragScrollModule] = await Promise.all([
+					import('./carouselDragScroll.js'),
+					import('./verticalDragScroll.js'),
+				]);
+				
+				// Dispatch the custom event (goes to verticalDragScroll's "content-loaded" thing, last line. Learn about it
+				const event = new Event('content-loaded');
+				document.dispatchEvent(event);
 
-                        Call-to-Action (CTA) Buttons:
-                        - "View My Work" (anchors to the My Work section).
-                        - "Learn More About Me" (anchors to About Me).
-                    </p>
-                </section>
-                
-                <!-- Work Section -->
-                <section id="work" class="content">
-                    <p style="white-space: pre-line;">
-                        Button: "Explore All Projects" (links to the Projects Page).
-                    </p>
-                    <div class="carousel-container">
-                        <section class="modal left">1</section>
-                        <section class="modal center">2</section>
-                        <section class="modal right">3</section>
-                        <section class="modal hidden">4</section>
-                        <section class="modal hidden">5</section>
-                        <section class="modal hidden">6</section>
-                        <section class="modal hidden">7</section>
-                    </div>
-                </section>
-                
-                <!-- Contact Section -->
-                <section id="contact" class="content">
-                    <p style="white-space: pre-line;">
-                        Contact Information:
-
-                        Email (with a "Click to Copy" feature).
-                        Phone (optional).
-
-                        Social Media Links: Compact and neatly designed icons/buttons.
-                    </p>
-                </section>
-                
-                <!-- About Section -->
-                <section id="about" class="content">
-                    <p style="white-space: pre-line;">
-                        Introduction:
-
-                        Brief overview of your journey and specialization in low-poly 3D modeling.
-                        Focus on expertise, adaptability, and brand ethos.
-
-                        Call-to-Action Button: "Explore My Labs" (links to the Labs Page).
-                    </p>
-                </section>
-            </div>
-        `,
-        init: async () => {
-            document.title = 'Home - Kinu 3D';
-
-            // Initialize shared modules
-            const [carouselDragScrollModule, verticalDragScrollModule] = await Promise.all([
-                import('./carouselDragScroll.js'),
-                import('./verticalDragScroll.js'),
-            ]);
-
-            // Initialize specific features
-            carouselDragScrollModule.init();
-            verticalDragScrollModule.init();
-        },
+				// Initialize specific features
+				carouselDragScrollModule.init();
+				verticalDragScrollModule.init();
+			} catch (error) {
+				console.error('Error loading home content:', error);
+			}
+		},
     },
     '/projects': {
-        spacontent: `
-            <h1>My Projects</h1>
-            <div class="carousel-container">
-                <section class="modal left">1</section>
-                <section class="modal center">2</section>
-                <section class="modal right">3</section>
-                <section class="modal hidden">4</section>
-                <section class="modal hidden">5</section>
-                <section class="modal hidden">6</section>
-                <section class="modal hidden">7</section>
-            </div>
-        `,
         init: async () => {
-            document.title = 'Projects - Kinu 3D';
+			
+			try {
+				document.title = 'Projects - Kinu 3D';
+				
+				// Load core styles and projects-specific styles
+                loadCSS('../css/styles.css', '../css/projects.css');   // Load prjoects-specific styles
+				
+				// Fetch and set the spacontent dynamically
+				const response = await fetch ('./spacontent/projects.html');
+				const content = await response.text();
+				document.getElementById('spacontent').innerHTML = content;
 
-            // Load carousel drag-scroll module for projects
-            const carouselDragScrollModule = await import('./carouselDragScroll.js');
-            carouselDragScrollModule.init();
+				// Initialize shared modules
+				const [carouselDragScrollModule, verticalDragScrollModule] = await Promise.all([
+					import('./carouselDragScroll.js'),
+					import('./verticalDragScroll.js'),
+				]);
+				
+				
+				// Initialize specific features
+				carouselDragScrollModule.init();
+				verticalDragScrollModule.init();
+				
+				// Dispatch the custom event (goes to verticalDragScroll's "content-loaded" thing, last line. Learn about it
+				const event = new Event('content-loaded');
+				document.dispatchEvent(event);
+			
+			} catch (error) {
+				console.error('Error loading home content:', error);
+			}
         },
     },
     '/lab': {

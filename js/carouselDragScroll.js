@@ -58,11 +58,16 @@ export function init() {
     };
 
 	function disabledPages() {
-		const disabledPages = ['test.html', 'projects.html', 'lab.html'];
-		// Check if the current pathname ends with any of the disabled pages
-		if (disabledPages.some(page => window.location.pathname.endsWith(page))) {
+		console.log("Checking Disabled Pages");
+		const disabledPages = ['#/test', '#/projects', '#/lab'];
+		const currentPage = window.location.hash || '/'; // Default to '/' if no hash
+
+		// Check if the current hash matches any of the disabled pages
+		if (disabledPages.some(page => currentPage.startsWith(page))) {
+			console.log(`${currentPage} is disabled.`);
 			return true; // Indicate that the function should return
 		}
+		console.log(`${currentPage} is not disabled, proceed.`);
 		return false; // Indicate that the function can proceed
 	}
 

@@ -1,44 +1,30 @@
 export function init() {
-    console.log("verticalDragScrollModule Initialized!");
 
-    // Wait until the DOM is fully rendered
-    window.addEventListener("load", () => {
-        // Select all elements with the class 'scrollDeck'
+    // Function to initialize drag-scroll behavior
+    const initializeScrollDecks = () => {
         const scrollDecks = document.querySelectorAll(".scrollDeck");
 
         scrollDecks.forEach((scrollDeck) => {
-            // Check if the scrollDeck has overflow content
             const scrollHeight = scrollDeck.scrollHeight;
             const clientHeight = scrollDeck.clientHeight;
-
-            console.log(`ScrollDeck Height Check - scrollHeight: ${scrollHeight}, clientHeight: ${clientHeight}`);
-
-            if (scrollHeight <= clientHeight) {
-                console.warn(`ScrollDeck with ID "${scrollDeck.id}" does not have overflow content.`);
-                return;
-            }
-
-            let isDragging = false;
+			
+			let isDragging = false;
             let startY = 0;
             let scrollTop = 0;
 
-            // Drag-to-scroll for desktop (mouse)
             scrollDeck.addEventListener("mousedown", (e) => {
                 isDragging = true;
                 startY = e.clientY;
                 scrollTop = scrollDeck.scrollTop;
-                scrollDeck.style.cursor = "grabbing"; // Visual feedback
+                scrollDeck.style.cursor = "default";
                 e.preventDefault();
             });
 
             scrollDeck.addEventListener("mousemove", (e) => {
                 if (!isDragging) return;
                 const y = e.clientY;
-                const walk = (y - startY) * 2;
+                const walk = (y - startY) * 4;
                 scrollDeck.scrollTop = scrollTop - walk;
-                console.log(
-                    `scrollTop: ${scrollDeck.scrollTop}, walk: ${walk}, y: ${y}, startY: ${startY}`
-                );
             });
 
             scrollDeck.addEventListener("mouseup", () => {
@@ -51,7 +37,6 @@ export function init() {
                 scrollDeck.style.cursor = "default";
             });
 
-            // Touch-to-scroll for mobile devices
             scrollDeck.addEventListener("touchstart", (e) => {
                 isDragging = true;
                 startY = e.touches[0].clientY;
@@ -76,11 +61,21 @@ export function init() {
             });
         });
 
-        // Sync page scroll with all scrollDecks' scrolls
         document.addEventListener("wheel", (e) => {
             scrollDecks.forEach((scrollDeck) => {
                 scrollDeck.scrollTop += e.deltaY * 2;
             });
         });
-    });
+    };
+
+    // Check if spacontent exists, and initialize
+    const spacontent = document.getElementById("spacontent");
+    if (spacontent) {
+        initializeScrollDecks(); // Initialize immediately if spacontent is already loaded
+    } else {
+        console.warn("spacontent not found; waiting for dynamic content.");
+    }
+
+    // Optionally, listen for custom events when dynamic content is loaded
+    document.addEventListener("content-loaded", initializeScrollDecks);
 }

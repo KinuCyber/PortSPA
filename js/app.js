@@ -34,6 +34,7 @@ function initGlobalFeatures() {
 	
 }
 
+
 // Initial load
 handleRouting();
 initGlobalFeatures();

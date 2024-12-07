@@ -1,0 +1,39 @@
+.modal.center {
+	left: 50%;
+	width: 90%;
+	height: 100%;
+	transform: translateX(-50%) translateY(0%);
+	background: rgba(255, 165, 120, 0);
+	opacity: 1;
+	box-shadow: 0 0 50px rgba(255, 165, 120, 0);
+	visibility: visible;
+	z-index: 3;
+	min-width: 400px;
+	border-radius: 0px;
+}
+
+.modal.left {
+	left: 0%;
+	transform: translateX(-70%) translateY(0%) scale(0.9);
+	background: transparent;
+	opacity: 0.3;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+	visibility: visible;
+	z-index: 2;
+	min-width: 400px;
+}
+
+.modal.right {
+	right: 0%;
+	transform: translateX(100%) translateY(0%) scale(0.9);
+	background: transparent;
+	opacity: 0.3;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+	visibility: visible;
+	z-index: 2;
+	min-width: 400px;
+}
+
+.modal.hidden {
+	min-width: 400px;
+}

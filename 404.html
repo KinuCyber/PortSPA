@@ -7,11 +7,14 @@
   <script>
     // Avoid infinite redirection by checking if we're already at the root
     if (!window.location.pathname.startsWith('/index.html')) {
-      window.location.replace('/index.html' + window.location.pathname);
+	
+		setTimeout(() => {
+			window.location.replace('/index.html'/* + window.location.pathname*/);
+		}, 5000); // 2000 milliseconds = 2 seconds
     }
   </script>
 </head>
 <body>
-  Redirecting...
+  Not the right address? Fear not! For, in five seconds, I shall take you back to home page! Redirecting...
 </body>
 </html>
